@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png"href="Logo.jpg"><title>R.I.A Opening</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-black text-white fixed inset-0 flex flex-col justify-between box-border overflow-hidden">
+
+    <div id="splash-screen" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
+        <div class="relative w-28 h-28 md:w-36 md:h-36 bg-white rounded-full flex items-center justify-center shadow-2xl mb-6 animate-pulse">
+            <img src="Logo.jpg" alt="Splash Crest" class="w-20 h-20 md:w-28 md:h-28 object-contain rounded-full">
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold tracking-wider mb-2">R.I.A</h1>
+        <p class="text-gray-400 text-sm tracking-widest uppercase mb-6">Initializing System...</p>
+        <div class="spinner-ring"></div>
+    </div>
+
+    <header class="flex justify-between items-start w-full shrink-0">
+        <div class="max-w-[240px] sm:max-w-md">
+            <h1 class="text-lg sm:text-2xl md:text-3xl font-semibold leading-snug tracking-tight">
+                Recording of Information<br>in Application
+            </h1>
+        </div>
+
+<div class="flex flex-col space-y-2 sm:space-y-3 shrink-0">
+    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-black bg-gray-900 shadow-md flex items-center justify-center">
+        <img src="SuperAI.jpg" alt="User Avatar 1" class="w-full h-full object-cover rounded-full">
+    </div>
+    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-black bg-gray-900 shadow-md flex items-center justify-center">
+        <img src="Dev.jpg" alt="User Avatar 2" class="w-full h-full object-cover rounded-full">
+    </div>
+    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-black bg-gray-900 shadow-md flex items-center justify-center">
+        <img src="SLHS.jpg" alt="User Avatar 3" class="w-full h-full object-cover rounded-full">
+    </div>
+    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-black bg-gray-900 shadow-md flex items-center justify-center">
+        <img src="Hopper.jpg" alt="User Avatar 4" class="w-full h-full object-cover rounded-full">
+    </div>
+</div>
+</header>
+
+    <main class="flex flex-col items-center justify-center text-center my-auto min-h-0">
+        <div class="w-32 h-32 md:w-44 md:h-44 shrink-0 bg-white rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(255,255,255,0.15)] mb-4 transition-transform hover:scale-105 duration-300">
+            <img src="Logo.jpg" alt="R.I.A Phoenix Shield Crest" class="w-20 h-20 md:w-28 md:h-28 object-contain rounded-full">
+        </div>
+
+        <h2 class="text-3xl md:text-4xl font-bold tracking-widest mb-1">R.I.A</h2>
+        <p class="text-xs md:text-sm text-gray-300 font-medium">Powered by Super AI</p>
+        <p class="text-[11px] md:text-xs text-gray-400 mt-0.5">Chryxh</p>
+    </main>
+
+    <footer class="flex justify-between items-end w-full shrink-0">
+        <div class="text-xs md:text-sm text-gray-300 font-mono tracking-wider">
+            1.129.177.8 BETA TEST 
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <span class="text-base md:text-lg text-gray-200 font-light tracking-wide">Loading...</span>
+            <div class="spinner-ring"></div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
