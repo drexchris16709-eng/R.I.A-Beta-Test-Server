@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png"href="Logo.jpg"><title>R.I.A Account</title>
+
+ <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<button class="menu-btn" id="menuBtn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+</button>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="phone" id="sidebarPhone">
+
+  <div class="header">
+    <div class="logo">
+      <img src="Logo.jpg" alt="R.I.A logo">
+    </div>
+    <h1>R.I.A Dashboard</h1>
+    <div class="dots">&#8226;&#8226;&#8226;</div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="section-label"><span>Tasks Assigned</span><span></span></div>
+  <div class="tasks-scroll" id="tasksScroll">
+    <div class="task-card">
+      <div class="task-info"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg></div>
+      <div>
+        <div class="task-deadline">Deadline: Date</div>
+        <div class="task-title">Task Title</div>
+        <div class="task-sub">Task Subject</div>
+      </div>
+      <div class="task-view">View</div>
+    </div>    <div class="task-card">
+      <div class="task-info"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg></div>
+      <div>
+        <div class="task-deadline">Deadline: Date</div>
+        <div class="task-title">Task Title</div>
+        <div class="task-sub">Task Subject</div>
+      </div>
+      <div class="task-view">View</div>
+    </div>
+    <div class="task-card">
+      <div class="task-info"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg></div>
+      <div>
+        <div class="task-deadline">Deadline: Date</div>
+        <div class="task-title">Task Title</div>
+        <div class="task-sub">Task Subject</div>
+      </div>
+      <div class="task-view">View</div>
+    </div>
+    <div class="task-card">
+      <div class="task-info"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg></div>
+      <div>
+        <div class="task-deadline">Deadline: Date</div>
+        <div class="task-title">Task Title</div>
+        <div class="task-sub">Task Subject</div>
+      </div>
+      <div class="task-view">View</div>
+    </div>
+  </div>
+  <div class="section-label" style="padding-top:2px;">
+    <span></span><span class="see-more">See More</span>
+  </div>
+
+  <div class="accordions" id="accordions"></div>
+
+  <div class="section-label" style="padding-top:20px;"><span>Today's Feature</span><span class="see-more">See More</span></div>
+  <div class="feature-wrap">
+    <div class="feature-slider">
+      <div class="feature-track" id="featureTrack"></div>
+    </div>
+  </div>
+
+  <div class="section-label" style="padding-top:22px;"><span>Quick Access</span><span></span></div>
+  <div class="qa-list" id="qaList"></div>
+  <div class="qa-toggle"><button id="qaToggleBtn">See More<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button></div>
+
+  <div class="ext-label">Extensions</div>
+  <div class="ext-pill"><div class="ext-row" id="extScroll"></div></div>
+
+  <div class="sub-label">Subscription Plans</div>
+  <div class="plan-wrap">
+    <div class="feature-slider" style="border:none;">
+      <div class="plan-track" id="planTrack"></div>
+    </div>
+  </div>
+  <div class="plan-dots" id="planDots"></div>
+
+  <div class="footer-row">
+    <div class="footer-btn logout" role="button" tabindex="0" onclick="openLogoutModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLogoutModal();}">LOGOUT</div>
+    <div class="footer-btn switch">SWITCH</div>
+  </div>
+
+</div>
+
+  <div class="banner">
+    <img src="B.jpg" alt="Dashboard Banner" class="banner-img" onerror="this.onerror=null; this.src='banner.png';" />
+    <div class="banner-overlay"></div>
+    <div class="top-icons">
+      <a href="add-user.html" class="icon-link" aria-label="Add User">
+        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      </a>
+      <a href="cart.html" class="icon-link" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="greeting">Hello User!</div>
+  <div class="dashboard-header">
+    <div class="title-area">
+      <h1>Student Dashboard</h1>
+      <span>Beta Test</span>
+    </div>
+    <div class="header-icons">
+      <a href="stats.html" class="icon-link" aria-label="Stats">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </a>
+      <a href="calendar.html" class="icon-link" aria-label="Calendar">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="section-label">Worksheets</div>
+  <div class="worksheets-scroll hide-scrollbar">
+    <a href="pts.html" class="btn-pill">PT'S</a>
+    <a href="homeworks.html" class="btn-pill">Homeworks</a>
+    <a href="quizzes.html" class="btn-pill">Quizzes</a>
+    <a href="exams.html" class="btn-pill">Exams</a>
+    <a href="projects.html" class="btn-pill">Projects</a>
+    <a href="activities.html" class="btn-pill">Activities</a>
+  </div>
+
+  <div class="tasks-manager-label">Due Tracker</div>
+
+  <div class="dues-card">
+    <div class="dues-header">
+      <div class="dues-title">
+        <button class="btn-info-modal" aria-label="Information" onclick="openModal('Information', 'View and manage all your upcoming tasks and subject deadlines here.')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+        </button>
+        Due's
+      </div>
+      <a href="see-more-dues.html" class="view-all-dues-link">View All</a>
+    </div>
+
+    <div class="dues-list hide-scrollbar">
+      <a href="entrepreneurship.html" class="due-item">
+        <span class="due-item-title">Due Subject</span>
+        <div class="due-item-actions">
+          <span class="due-status"></span>
+          <button class="btn-question-modal" aria-label="Task Details Help" onclick="event.stopPropagation(); event.preventDefault(); openModal('Due Subject Details', 'This task is due soon. Make sure to complete before submitting.')">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.4 9.6a2.7 2.7 0 0 1 5.2.9c0 1.7-2.6 2.1-2.6 3.8"/><circle cx="12" cy="17" r="1.1" fill="currentColor" stroke="none"/></svg>
+          </button>
+        </div>
+      </a>
+
+      <a href="oral-communication.html" class="due-item">
+        <span class="due-item-title">Due Subject</span>
+        <div class="due-item-actions">
+          <span class="due-status"></span>
+          <button class="btn-question-modal" aria-label="Task Details Help" onclick="event.stopPropagation(); event.preventDefault(); openModal('Due Subject Details', 'This task is due soon. Make sure to complete before submitting.')">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.4 9.6a2.7 2.7 0 0 1 5.2.9c0 1.7-2.6 2.1-2.6 3.8"/><circle cx="12" cy="17" r="1.1" fill="currentColor" stroke="none"/></svg>
+          </button>
+        </div>
+      </a>
+
+      <a href="hope.html" class="due-item">
+        <span class="due-item-title">Due Subject</span>
+        <div class="due-item-actions">
+          <span class="due-status"></span>
+          <button class="btn-question-modal" aria-label="Task Details Help" onclick="event.stopPropagation(); event.preventDefault(); openModal('Due Subject Details', 'This task is due soon. Make sure to complete before submitting')">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.4 9.6a2.7 2.7 0 0 1 5.2.9c0 1.7-2.6 2.1-2.6 3.8"/><circle cx="12" cy="17" r="1.1" fill="currentColor" stroke="none"/></svg>
+          </button>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="attendance-header">
+    <h2>Attendance</h2>
+  </div>
+
+  <div class="attendance-scroll hide-scrollbar">
+    <a href="attendance-january.html" class="attendance-card">
+      <div class="attendance-card-top">
+        <span class="attendance-card-title">June: Summary</span>
+        <div class="attendance-card-right">
+          <span class="attendance-year">2026</span>
+          <button class="btn-card-info" aria-label="June Attendance Details" onclick="event.stopPropagation(); event.preventDefault(); openModal('June 2026 Summary', 'Total Days Recorded: 0\nPresent: 0 Days\nAbsent: 0 Days');">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-present">Present</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-absent">Absent</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="card-view-more">View More</div>
+    </a>
+
+    <a href="attendance-february.html" class="attendance-card">
+      <div class="attendance-card-top">
+        <span class="attendance-card-title">July: Summary</span>
+        <div class="attendance-card-right">
+          <span class="attendance-year">2026</span>
+          <button class="btn-card-info" aria-label="July Attendance Details" onclick="event.stopPropagation(); event.preventDefault(); openModal('July 2026 Summary', 'Total Days Recorded: 0\nPresent: 0 Days\nAbsent: 0 Days');">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-present">Present</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-absent">Absent</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="card-view-more">View More</div>
+    </a>
+
+    <a href="attendance-march.html" class="attendance-card">
+      <div class="attendance-card-top">
+        <span class="attendance-card-title">Aug: Summary</span>
+        <div class="attendance-card-right">
+          <span class="attendance-year">2026</span>
+          <button class="btn-card-info" aria-label="August Attendance Details" onclick="event.stopPropagation(); event.preventDefault(); openModal('August 2026 Summary', 'Total Days Recorded: 0\nPresent: 0 Days\nAbsent: 0 Days');">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-present">Present</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-absent">Absent</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="card-view-more">View More</div>
+    </a>
+
+    <a href="attendance-april.html" class="attendance-card">
+      <div class="attendance-card-top">
+        <span class="attendance-card-title">Sept: Summary</span>
+        <div class="attendance-card-right">
+          <span class="attendance-year">2026</span>
+          <button class="btn-card-info" aria-label="September Attendance Details" onclick="event.stopPropagation(); event.preventDefault(); openModal('September 2026 Summary', 'Total Days Recorded: 0\nPresent: 0 Days\nAbsent: 0 Days');">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-present">Present</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-absent">Absent</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="card-view-more">View More</div>
+    </a>
+
+    <a href="attendance-may.html" class="attendance-card">
+      <div class="attendance-card-top">
+        <span class="attendance-card-title">Oct: Summary</span>
+        <div class="attendance-card-right">
+          <span class="attendance-year">2026</span>
+          <button class="btn-card-info" aria-label="October Attendance Details" onclick="event.stopPropagation(); event.preventDefault(); openModal('October 2026 Summary', 'Total Days Recorded: 0\nPresent: 0 Days\nAbsent: 0 Days');">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-present">Present</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-absent">Absent</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="card-view-more">View More</div>
+    </a>
+
+    <a href="attendance-june.html" class="attendance-card">
+      <div class="attendance-card-top">
+        <span class="attendance-card-title">Nov: Summary</span>
+        <div class="attendance-card-right">
+          <span class="attendance-year">2026</span>
+          <button class="btn-card-info" aria-label="November Attendance Details" onclick="event.stopPropagation(); event.preventDefault(); openModal('November 2026 Summary', 'Total Days Recorded: 0\nPresent: 0 Days\nAbsent: 0 Days');">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-present">Present</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-absent">Absent</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="card-view-more">View More</div>
+    </a>
+
+    <a href="attendance-july.html" class="attendance-card">
+      <div class="attendance-card-top">
+        <span class="attendance-card-title">Dec: Summary</span>
+        <div class="attendance-card-right">
+          <span class="attendance-year">2026</span>
+          <button class="btn-card-info" aria-label="December Attendance Details" onclick="event.stopPropagation(); event.preventDefault(); openModal('December 2026 Summary', 'Total Days Recorded: 0\nPresent: 0 Days\nAbsent: 0 Days');">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-present">Present</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-absent">Absent</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="card-view-more">View More</div>
+    </a>
+
+    <a href="attendance-august.html" class="attendance-card">
+      <div class="attendance-card-top">
+        <span class="attendance-card-title">Jan: Summary</span>
+        <div class="attendance-card-right">
+          <span class="attendance-year">2027</span>
+          <button class="btn-card-info" aria-label="January Attendance Details" onclick="event.stopPropagation(); event.preventDefault(); openModal('January 2027 Summary', 'Total Days Recorded: 0\nPresent: 0 Days\nAbsent: 0 Days');">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-present">Present</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-absent">Absent</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="card-view-more">View More</div>
+    </a>
+
+    <a href="attendance-september.html" class="attendance-card">
+      <div class="attendance-card-top">
+        <span class="attendance-card-title">Feb: Summary</span>
+        <div class="attendance-card-right">
+          <span class="attendance-year">2027</span>
+          <button class="btn-card-info" aria-label="February Attendance Details" onclick="event.stopPropagation(); event.preventDefault(); openModal('February 2027 Summary', 'Total Days Recorded: 0\nPresent: 0 Days\nAbsent: 0 Days');">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-present">Present</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-absent">Absent</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="card-view-more">View More</div>
+    </a>
+
+    <a href="attendance-october.html" class="attendance-card">
+      <div class="attendance-card-top">
+        <span class="attendance-card-title">March: Summary</span>
+        <div class="attendance-card-right">
+          <span class="attendance-year">2027</span>
+          <button class="btn-card-info" aria-label="March Attendance Details" onclick="event.stopPropagation(); event.preventDefault(); openModal('March 2027 Summary', 'Total Days Recorded: 0\nPresent: 0 Days\nAbsent: 0 Days');">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="10.5" x2="12" y2="18"/><circle cx="12" cy="5.8" r="1.2" fill="#111" stroke="none"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-present">Present</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="attendance-pill">
+        <span class="status-absent">Absent</span>
+        <span class="pill-count">---</span>
+      </div>
+      <div class="card-view-more">View More</div>
+    </a>
+  </div>
+
+  <div class="attendance-footer">
+    <a href="attendance-all.html" class="attendance-view-all-link">View All</a>
+  </div>
+
+  <div class="school-events-section">
+    <div class="events-header">School Events</div>
+    <a href="school-events.html" class="events-banner-link">
+      <img src="I.jpg" alt="School Events Banner" class="events-banner-img" onerror="this.onerror=null; this.src='school-event.png';" />
+    </a>
+    <div class="events-footer">
+      <span class="events-subtitle">Upcoming: Dec 2026</span>
+      <a href="school-events.html" class="events-see-more">See More</a>
+    </div>
+  </div>
+
+  <div class="slideshow-section">
+    <div class="slideshow-section-title">School News</div>
+    <div class="slideshow-container" id="newsSlideshow">
+      <div class="slideshow-track">
+        <div class="slide-card">
+          <img src="B1.jpg" alt="School News 1" onerror="this.onerror=null; this.src='school-news1.png';" />
+          <a href="school-news1-details.html" class="slide-see-more">See More</a>
+        </div>
+        <div class="slide-card">
+          <img src="B2.jpg" alt="School News 2" onerror="this.onerror=null; this.src='school-news2.png';" />
+          <a href="school-news2-details.html" class="slide-see-more">See More</a>
+        </div>
+        <div class="slide-card">
+          <img src="B3.jpg" alt="School News 3" onerror="this.onerror=null; this.src='school-news3.png';" />
+          <a href="school-news3-details.html" class="slide-see-more">See More</a>
+        </div>
+      </div>
+    </div>
+    <div class="slideshow-footer">
+      <div class="slideshow-indicators" id="newsIndicators">
+        <span class="indicator-dot active" data-index="0"></span>
+        <span class="indicator-dot" data-index="1"></span>
+        <span class="indicator-dot" data-index="2"></span>
+      </div>
+      <a href="school-news-all.html" class="slideshow-view-all">View All</a>
+    </div>
+  </div>
+
+  <div class="slideshow-section">
+    <div class="slideshow-section-title">What's New About R.I.A?</div>
+    <div class="slideshow-container" id="riaSlideshow">
+      <div class="slideshow-track">
+        <div class="slide-card">
+          <img src="W1.png" alt="What's New About R.I.A 1" onerror="this.onerror=null; this.src='ria-news1.png';" />
+          <a href="ria-news1-details.html" class="slide-see-more">See More</a>
+        </div>
+        <div class="slide-card">
+          <img src="W2.png" alt="What's New About R.I.A 2" onerror="this.onerror=null; this.src='ria-news2.png';" />
+          <a href="ria-news2-details.html" class="slide-see-more">See More</a>
+        </div>
+        <div class="slide-card">
+          <img src="W3.png" alt="What's New About R.I.A 3" onerror="this.onerror=null; this.src='ria-news3.png';" />
+          <a href="ria-news3-details.html" class="slide-see-more">See More</a>
+        </div>
+        <div class="slide-card">
+          <img src="W4.png" alt="What's New About R.I.A 4" onerror="this.onerror=null; this.src='ria-news4.png';" />
+          <a href="ria-news4-details.html" class="slide-see-more">See More</a>
+        </div>
+        <div class="slide-card">
+          <img src="W5.png" alt="What's New About R.I.A 5" onerror="this.onerror=null; this.src='ria-news5.png';" />
+          <a href="ria-news5-details.html" class="slide-see-more">See More</a>
+        </div>
+      </div>
+    </div>
+    <div class="slideshow-footer">
+      <div class="slideshow-indicators" id="riaIndicators">
+        <span class="indicator-dot active" data-index="0"></span>
+        <span class="indicator-dot" data-index="1"></span>
+        <span class="indicator-dot" data-index="2"></span>
+        <span class="indicator-dot" data-index="3"></span>
+        <span class="indicator-dot" data-index="4"></span>
+      </div>
+      <a href="ria-news-all.html" class="slideshow-view-all">View All</a>
+    </div>
+  </div>
+
+  <div class="ria-banner-card">
+    <div class="ria-banner-title">R.I.A Upcoming Feature</div>
+    <div class="ria-banner-wrapper">
+      <a href="ria-upcoming-feature.html">
+        <img src="Q.png" alt="R.I.A Upcoming Feature" onerror="this.onerror=null; this.src='ria-upcoming-feature.png';" />
+      </a>
+    </div>
+    <div class="ria-banner-footer">
+      <a href="ria-upcoming-feature.html" class="ria-see-more-btn">See More</a>
+    </div>
+  </div>
+
+  <div class="ria-banner-card">
+    <div class="ria-banner-title">R.I.A Best Deal</div>
+    <div class="ria-banner-wrapper">
+      <a href="ria-best-deal.html">
+        <img src="S.png" alt="R.I.A Best Deal" onerror="this.onerror=null; this.src='ria-best-deal.png';" />
+      </a>
+    </div>
+    <div class="ria-banner-footer">
+      <a href="ria-best-deal.html" class="ria-see-more-btn">See More</a>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <button class="scroll-top-btn" onclick="scrollToTop()" aria-label="Go back to top">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+    </button>
+    <div class="footer-copyright">
+      All right reserved of R.I.A Recording Information Application
+    </div>
+  </footer>
+
+  <nav class="bottom-nav">
+    <a href="javascript:void(0)" class="nav-item active" aria-current="page">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="notifications.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span>Notification</span>
+    </a>
+    <a href="../UserSearch/Search.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Search</span>
+    </a>
+    <a href="tasks.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span>Tasks</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <div id="infoModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+      <div id="modalTitle" class="modal-title">Info</div>
+      <div id="modalBody" class="modal-body">Modal Details Here</div>
+    </div>
+  </div>
+
+  <div id="logoutModal" class="modal-overlay" onclick="closeLogoutModal()">
+    <div class="modal-content logout-modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" aria-label="Close" onclick="closeLogoutModal()">✕</button>
+      <div class="modal-title">Logout</div>
+      <div class="modal-body">Are you sure you want to Logout?</div>
+      <div class="logout-actions">
+        <button type="button" class="logout-btn cancel" onclick="closeLogoutModal()">Cancel</button>
+        <button type="button" class="logout-btn okay" onclick="confirmLogout()">Okay</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="logoutLoading" class="modal-overlay" role="alert" aria-live="polite">
+    <div class="modal-content logout-modal-content">
+      <div class="logout-spinner" aria-hidden="true"></div>
+      <div class="modal-body">Logging out...</div>
+    </div>
+  </div>
+
+  <div id="imageViewer" class="modal-overlay image-viewer" onclick="closeImageViewer()">
+    <button class="viewer-close" aria-label="Close" onclick="event.stopPropagation(); closeImageViewer()"></button>
+    <img id="imageViewerImg" class="image-viewer-img" alt="" draggable="false" onclick="event.stopPropagation()">
+  </div>
+
+  <div class="popup-overlay" id="popupOverlay">
+  <div class="popup-content">
+    <h3>Featured</h3>
+
+    <div class="slider-container" id="sliderContainer">
+      <img src="S1.png" class="slide active" alt="slide 1">
+      <img src="S2.png" class="slide" alt="slide 2">
+      <img src="S3.png" class="slide" alt="slide 3">
+      <img src="S4.png" class="slide" alt="slide 4">
+      <img src="S5.png" class="slide" alt="slide 5">
+      <img src="S6.png" class="slide" alt="slide 6">
+    </div>
+
+<button class="close-btn-pill" onclick="closeFeaturedPopup()">Close</button>  
+</div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
