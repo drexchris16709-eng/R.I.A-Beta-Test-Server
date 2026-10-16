@@ -7,7 +7,7 @@
                 }
 
                 setTimeout(() => {
-                    window.location.href = '../User/index.html';
+                    window.location.href = '.../User/index.html';
                 }, 6000);
 
             }, 2000);
