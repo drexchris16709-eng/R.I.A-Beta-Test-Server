@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Passkeys - Developer Cotcots</title>
+    <link rel="icon" type="image/png" href="Logo.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+        input {
+            user-select: text;
+        }
+        @media (min-width: 768px) {
+            .desktop-back-wrapper {
+                position: fixed !important;
+                bottom: 2rem !important;
+                left: 1.5rem !important;
+                top: auto !important;
+                z-index: 40;
+            }
+            .desktop-login-wrapper {
+                position: fixed !important;
+                bottom: 2rem !important;
+                right: 1.5rem !important;
+                top: auto !important;
+                z-index: 40;
+            }
+        }
+        .slash-line {
+            stroke-dasharray: 30;
+            stroke-dashoffset: 30;
+            transition: stroke-dashoffset 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .slash-line.active {
+            stroke-dashoffset: 0;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col justify-between bg-black text-white selection:bg-neutral-800">
+
+    <div class="absolute top-0 left-0 w-full h-[40vh] overflow-hidden z-0 pointer-events-none">
+        <img 
+            src="B.jpg" 
+            alt="Castle Background JPG" 
+            class="w-full h-full object-cover opacity-75"
+            style="mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);"
+        >
+        <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black"></div>
+    </div>
+
+    <main class="relative z-10 flex flex-col px-6 pt-8 max-w-md mx-auto w-full flex-grow justify-center">
+        
+        <div class="flex items-center space-x-5 mb-8">
+            <div class="w-20 h-20 rounded-full bg-white flex items-center justify-center shadow-2xl flex-shrink-0 p-1.5 border-4 border-white/90 overflow-hidden">
+                <img 
+                    src="Logo.jpg" 
+                    alt="Logo Icon JPG" 
+                    class="w-full h-full object-cover rounded-full"
+                >
+            </div>
+            <div class="flex flex-col">
+                <h1 class="text-3xl font-extrabold tracking-tight text-white drop-shadow-md">Passkeys</h1>
+                <p class="text-neutral-400 text-sm font-medium mt-0.5">Developer: Cotcots</p>
+            </div>
+        </div>
+
+        <form id="loginForm" class="space-y-6" onsubmit="handleLogin(event)">
+            
+            <div class="flex flex-col space-y-1.5 relative">
+                <label for="passkeyInput" class="text-white text-base font-semibold tracking-wide">Passkey Code:</label>
+                <div class="relative w-full">
+                    <input 
+                        type="password" 
+                        id="passkeyInput" 
+                        placeholder="Enter your Passkeys Code here..."
+                        class="w-full h-14 bg-transparent border border-white rounded-md pl-4 pr-12 text-white text-base font-mono focus:outline-none focus:ring-2 focus:ring-white/50 transition placeholder:text-neutral-600 placeholder:font-sans"
+                        autocomplete="current-password"
+                    >
+                    <button 
+                        type="button" 
+                        id="togglePassBtn"
+                        onclick="togglePasswordVisibility()" 
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition p-1 focus:outline-none cursor-pointer"
+                        title="Show/Hide Passkey"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            <line id="eyeSlash" class="slash-line" x1="3" y1="3" x2="21" y2="21" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col space-y-1.5 relative">
+                <label for="userIdInput" class="text-white text-base font-semibold tracking-wide">User ID:</label>
+                <input 
+                    type="text" 
+                    id="userIdInput" 
+                    placeholder="Enter your User ID here..."
+                    class="w-full h-14 bg-transparent border border-white rounded-md px-4 text-white text-base focus:outline-none focus:ring-2 focus:ring-white/50 transition placeholder:text-neutral-600"
+                    autocomplete="username"
+                >
+                <div class="min-h-[22px] pt-1">
+                    <div id="errorText" class="hidden text-red-500 text-sm font-semibold">
+                        Invalid User ID or Passkeys Code
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="relative z-10 px-6 pb-8 pt-4 max-w-md mx-auto w-full flex items-center justify-between">
+        
+        <div class="desktop-back-wrapper">
+            <button 
+                type="button" 
+                onclick="handleBack()" 
+                class="flex items-center space-x-3 text-white hover:opacity-80 transition py-2 group cursor-pointer"
+            >
+                <div class="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center group-hover:bg-white/10 transition">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </div>
+                <span class="text-lg font-medium">Back</span>
+            </button>
+        </div>
+
+        <div class="desktop-login-wrapper">
+            <button 
+                type="submit" 
+                form="loginForm"
+                class="bg-white text-black font-bold text-xl px-12 py-3.5 rounded-full shadow-2xl hover:bg-neutral-200 active:scale-95 transition duration-200 cursor-pointer ml-auto"
+            >
+                Login
+            </button>
+        </div>
+    </footer>
+
+    <div id="loadingModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-black border-2 border-white p-8 rounded-2xl flex flex-col items-center space-y-4 max-w-xs w-full shadow-2xl">
+            <div class="w-12 h-12 border-4 border-neutral-800 border-t-white rounded-full animate-spin"></div>
+            <p id="loadingText" class="text-lg font-bold text-white tracking-wide">Logging in...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
