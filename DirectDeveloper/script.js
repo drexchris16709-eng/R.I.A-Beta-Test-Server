@@ -24,7 +24,7 @@ const CORRECT_PIN = "1234"; // Correct 4-digit code
 
                 setTimeout(() => {
                     // Redirect to dashboard html file
-                    window.location.href = "dashboard.html";
+                    window.location.href = "../DeveloperCustomerService/DVCS.html";
                 }, 4000); // 4 seconds exact loading time
 
             } else {
