@@ -1,4 +1,4 @@
-         const CORRECT_PIN = "1234"; // Correct 4-digit code
+const CORRECT_PIN = "1234"; // Correct 4-digit code
         let chancesRemaining = 2;   // Initial chances count (2, 1, 0)
         
         const userIdInput = document.getElementById('userIdInput');
@@ -255,11 +255,11 @@ if (canvas) {
   const centerY = 100;
   const radius = 50;
 
-  // ----- White fire particles -----
+  // ----- Red fire particles -----
   const flameParticles = [];
   const maxFlames = 40;
 
-  class WhiteFlame {
+  class RedFlame {
     constructor() {
       this.reset();
     }
@@ -300,12 +300,12 @@ if (canvas) {
         this.x, this.y, Math.max(0.1, this.size)
       );
 
-      grad.addColorStop(0, `rgba(255, 255, 255, ${this.life})`);
-      grad.addColorStop(0.4, `rgba(240, 245, 255, ${this.life * 0.7})`);
-      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      grad.addColorStop(0, `rgba(255, 90, 70, ${this.life})`);
+      grad.addColorStop(0.4, `rgba(255, 20, 20, ${this.life * 0.7})`);
+      grad.addColorStop(1, 'rgba(200, 0, 0, 0)');
 
       ctx.fillStyle = grad;
-      ctx.shadowColor = '#ffffff';
+      ctx.shadowColor = '#ff1a1a';
       ctx.shadowBlur = 10;
       ctx.fill();
       ctx.restore();
@@ -313,10 +313,10 @@ if (canvas) {
   }
 
   for (let i = 0; i < maxFlames; i++) {
-    flameParticles.push(new WhiteFlame());
+    flameParticles.push(new RedFlame());
   }
 
-  // ----- White lightning arcs -----
+  // ----- Red lightning arcs -----
   function drawLightningArc(startAngle, endAngle) {
     const steps = 10;
     const angleStep = (endAngle - startAngle) / steps;
@@ -339,8 +339,8 @@ if (canvas) {
       }
     }
 
-    ctx.strokeStyle = '#ffffff';
-    ctx.shadowColor = '#ffffff';
+    ctx.strokeStyle = '#ff2a2a';
+    ctx.shadowColor = '#ff0000';
     ctx.shadowBlur = Math.random() * 12 + 8;
     ctx.lineWidth = Math.random() * 1.5 + 1;
     ctx.stroke();
@@ -374,6 +374,430 @@ if (canvas) {
 
   requestAnimationFrame(animate);
 }
+
+/* ==========================================
+   MODAL VIDEO BACKGROUND + AUTO-ADAPTING DARK THEME
+   Samples the background mp4 and tints the black overlay
+   (and scrollbar track) with its dominant colour.
+   ========================================== */
+(function () {
+  const modalEl = document.getElementById('see-more-modal');
+  const box = modalEl && modalEl.querySelector('.modal-content-box');
+  const bgVideo = document.getElementById('modalBgVideo');
+  if (!modalEl || !box || !bgVideo) return;
+
+  const SIZE = 16;
+  const sampler = document.createElement('canvas');
+  sampler.width = SIZE;
+  sampler.height = SIZE;
+  const sctx = sampler.getContext('2d', { willReadFrequently: true });
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    let h = 0, s = 0;
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+      else if (max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h /= 6;
+    }
+    return [h, s, l];
+  }
+
+  function hslToRgb(h, s, l) {
+    if (s === 0) {
+      const v = Math.round(l * 255);
+      return [v, v, v];
+    }
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    return [
+      Math.round(hue2rgb(p, q, h + 1 / 3) * 255),
+      Math.round(hue2rgb(p, q, h) * 255),
+      Math.round(hue2rgb(p, q, h - 1 / 3) * 255)
+    ];
+  }
+
+  let failed = false;
+
+  function updateTheme() {
+    if (failed || !modalEl.classList.contains('open') || bgVideo.readyState < 2) return;
+    try {
+      sctx.drawImage(bgVideo, 0, 0, SIZE, SIZE);
+      const data = sctx.getImageData(0, 0, SIZE, SIZE).data;
+      let r = 0, g = 0, b = 0;
+      const n = data.length / 4;
+      for (let i = 0; i < data.length; i += 4) {
+        r += data[i]; g += data[i + 1]; b += data[i + 2];
+      }
+      const [h, s] = rgbToHsl(r / n, g / n, b / n);
+      const sat = Math.min(0.9, s);
+
+      const tint = hslToRgb(h, sat, 0.07);   // near-black, hue follows the video
+      const track = hslToRgb(h, sat, 0.14);  // scrollbar track
+
+      box.style.setProperty('--theme-tint', tint.join(', '));
+      box.style.setProperty('--theme-track', `rgb(${track.join(', ')})`);
+    } catch (err) {
+      // Canvas is blocked (e.g. page opened via file://). Keep the plain black theme.
+      failed = true;
+      console.warn('Video colour sampling unavailable, using black theme:', err);
+    }
+  }
+
+  setInterval(updateTheme, 500);
+  bgVideo.addEventListener('loadeddata', updateTheme);
+
+  // Play the background video only while the modal is open
+  new MutationObserver(() => {
+    if (modalEl.classList.contains('open')) {
+      bgVideo.play().catch(err => console.log('Autoplay handled:', err));
+      updateTheme();
+    } else {
+      bgVideo.pause();
+    }
+  }).observe(modalEl, { attributes: true, attributeFilter: ['class'] });
+})();
+
+/* ==========================================
+   BANNER RED LIGHTNING (forked bolts + sparks)
+   ========================================== */
+(function () {
+  const bannerCanvas = document.getElementById('bannerLightning');
+  const modalEl = document.getElementById('see-more-modal');
+  if (!bannerCanvas || !modalEl) return;
+
+  const bctx = bannerCanvas.getContext('2d');
+  let bw = 0, bh = 0;
+
+  function resizeBanner() {
+    const rect = bannerCanvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const dpr = window.devicePixelRatio || 1;
+    bw = rect.width;
+    bh = rect.height;
+    bannerCanvas.width = Math.round(bw * dpr);
+    bannerCanvas.height = Math.round(bh * dpr);
+    bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  if (window.ResizeObserver) new ResizeObserver(resizeBanner).observe(bannerCanvas);
+  window.addEventListener('resize', resizeBanner);
+  resizeBanner();
+
+  // Jagged path between two points
+  function makePath(x1, y1, x2, y2, jitter) {
+    const dx = x2 - x1, dy = y2 - y1;
+    const dist = Math.hypot(dx, dy) || 1;
+    const steps = Math.max(4, Math.round(dist / 9));
+    const nx = -dy / dist, ny = dx / dist;
+    const pts = [{ x: x1, y: y1 }];
+    for (let i = 1; i < steps; i++) {
+      const t = i / steps;
+      const off = (Math.random() - 0.5) * 2 * jitter;
+      pts.push({ x: x1 + dx * t + nx * off, y: y1 + dy * t + ny * off });
+    }
+    pts.push({ x: x2, y: y2 });
+    return pts;
+  }
+
+  function makeBolt() {
+    const x1 = Math.random() * bw;
+    const y1 = -4;
+    const x2 = x1 + (Math.random() - 0.5) * bw * 0.35;
+    const y2 = bh * (0.55 + Math.random() * 0.45);
+
+    const main = makePath(x1, y1, x2, y2, 9);
+    const paths = [{ pts: main, w: 1 }];
+
+    if (main.length > 6) {
+      const branches = 1 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < branches; i++) {
+        const p = main[2 + Math.floor(Math.random() * (main.length - 4))];
+        const ang = Math.PI / 2 + (Math.random() - 0.5) * 1.8;
+        const len = 20 + Math.random() * 45;
+        paths.push({
+          pts: makePath(p.x, p.y, p.x + Math.cos(ang) * len, p.y + Math.sin(ang) * len, 5),
+          w: 0.55
+        });
+      }
+    }
+
+    return { paths, life: 1, decay: 0.045 + Math.random() * 0.03, end: { x: x2, y: y2 } };
+  }
+
+  function strokePath(pts, w, alpha) {
+    bctx.beginPath();
+    pts.forEach((p, i) => (i ? bctx.lineTo(p.x, p.y) : bctx.moveTo(p.x, p.y)));
+    bctx.lineJoin = 'round';
+    bctx.lineCap = 'round';
+
+    bctx.strokeStyle = `rgba(255, 0, 0, ${0.35 * alpha})`;   // outer glow
+    bctx.lineWidth = 7 * w;
+    bctx.shadowColor = '#ff0000';
+    bctx.shadowBlur = 18;
+    bctx.stroke();
+
+    bctx.strokeStyle = `rgba(255, 40, 40, ${alpha})`;        // body
+    bctx.lineWidth = 2.4 * w;
+    bctx.shadowBlur = 10;
+    bctx.stroke();
+
+    bctx.strokeStyle = `rgba(255, 170, 160, ${alpha})`;      // hot core
+    bctx.lineWidth = 1 * w;
+    bctx.shadowBlur = 0;
+    bctx.stroke();
+  }
+
+  let bolts = [];
+  let sparks = [];
+  let nextStrike = 0;
+
+  function spawnStrike() {
+    const bolt = makeBolt();
+    bolts.push(bolt);
+    const count = 8 + Math.floor(Math.random() * 8);
+    for (let i = 0; i < count; i++) {
+      const src = i % 3 === 0 ? bolt.end : bolt.paths[0].pts[Math.floor(Math.random() * bolt.paths[0].pts.length)];
+      sparks.push({
+        x: src.x,
+        y: src.y,
+        vx: (Math.random() - 0.5) * 2.4,
+        vy: (Math.random() - 0.7) * 2.2,
+        size: Math.random() * 1.6 + 0.6,
+        life: 1
+      });
+    }
+  }
+
+  function frame(time) {
+    requestAnimationFrame(frame);
+
+    if (!bw || !modalEl.classList.contains('open')) {
+      if (bolts.length || sparks.length) {
+        bolts = [];
+        sparks = [];
+        bctx.clearRect(0, 0, bw, bh);
+      }
+      return;
+    }
+
+    bctx.clearRect(0, 0, bw, bh);
+
+    if (time >= nextStrike) {
+      spawnStrike();
+      if (Math.random() < 0.3) spawnStrike();
+      nextStrike = time + 500 + Math.random() * 1400;
+    }
+
+    // Bolts
+    bolts.forEach(bolt => {
+      const alpha = Math.max(0, bolt.life) * (0.55 + Math.random() * 0.45);
+
+      // quick red flash across the banner
+      const flash = bctx.createLinearGradient(0, 0, 0, bh);
+      flash.addColorStop(0, `rgba(255, 0, 0, ${0.22 * bolt.life})`);
+      flash.addColorStop(1, 'rgba(255, 0, 0, 0)');
+      bctx.fillStyle = flash;
+      bctx.fillRect(0, 0, bw, bh);
+
+      bctx.save();
+      bolt.paths.forEach(p => strokePath(p.pts, p.w, alpha));
+      bctx.restore();
+
+      bolt.life -= bolt.decay;
+    });
+    bolts = bolts.filter(b => b.life > 0);
+
+    // Sparks
+    sparks.forEach(s => {
+      s.x += s.vx;
+      s.y += s.vy;
+      s.vy += 0.05;
+      s.life -= 0.03;
+      if (s.life <= 0) return;
+      bctx.save();
+      bctx.beginPath();
+      bctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      bctx.fillStyle = `rgba(255, 60, 50, ${s.life})`;
+      bctx.shadowColor = '#ff0000';
+      bctx.shadowBlur = 8;
+      bctx.fill();
+      bctx.restore();
+    });
+    sparks = sparks.filter(s => s.life > 0);
+  }
+
+  requestAnimationFrame(frame);
+})();
+
+/* ==========================================
+   PROFILE CIRCLE RED LIGHTNING (crawling arcs + spikes + sparks)
+   ========================================== */
+(function () {
+  const pCanvas = document.getElementById('profileLightning');
+  const modalEl = document.getElementById('see-more-modal');
+  if (!pCanvas || !modalEl) return;
+
+  const SIZE = 140;
+  const CX = SIZE / 2;
+  const CY = SIZE / 2;
+  const R = 50; // outer edge of the profile circle line
+
+  const pctx = pCanvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  pCanvas.width = SIZE * dpr;
+  pCanvas.height = SIZE * dpr;
+  pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const pt = (r, a) => ({ x: CX + r * Math.cos(a), y: CY + r * Math.sin(a) });
+
+  // Arc that crawls along the circle line
+  function makeArc() {
+    const start = Math.random() * Math.PI * 2;
+    const len = 0.5 + Math.random() * 1.0;
+    const steps = Math.max(6, Math.round(len * R / 4));
+    const pts = [];
+    for (let i = 0; i <= steps; i++) {
+      const a = start + (len * i) / steps;
+      const r = R + (Math.random() - 0.5) * 7;
+      pts.push(pt(r, a));
+    }
+    return { pts, w: 1, life: 1, decay: 0.09 + Math.random() * 0.07, spark: pts[pts.length - 1] };
+  }
+
+  // Jagged spike shooting outward from the line, with a small fork
+  function makeSpike() {
+    const a = Math.random() * Math.PI * 2;
+    const reach = 10 + Math.random() * 10;
+    const steps = 5;
+    const pts = [pt(R - 2, a)];
+    for (let i = 1; i <= steps; i++) {
+      const t = i / steps;
+      const aj = a + (Math.random() - 0.5) * 0.18;
+      pts.push(pt(R - 2 + (reach + 2) * t + (Math.random() - 0.5) * 2, aj));
+    }
+    const paths = [{ pts, w: 1 }];
+    const fp = pts[2 + Math.floor(Math.random() * 2)];
+    const fa = a + (Math.random() < 0.5 ? -1 : 1) * (0.35 + Math.random() * 0.3);
+    const flen = 6 + Math.random() * 6;
+    paths.push({
+      pts: [fp, { x: fp.x + Math.cos(fa) * flen * 0.5 + (Math.random() - 0.5) * 2, y: fp.y + Math.sin(fa) * flen * 0.5 + (Math.random() - 0.5) * 2 },
+            { x: fp.x + Math.cos(fa) * flen, y: fp.y + Math.sin(fa) * flen }],
+      w: 0.6
+    });
+    return { paths, life: 1, decay: 0.1 + Math.random() * 0.07, spark: pts[pts.length - 1] };
+  }
+
+  function strokePath(pts, w, alpha) {
+    pctx.beginPath();
+    pts.forEach((p, i) => (i ? pctx.lineTo(p.x, p.y) : pctx.moveTo(p.x, p.y)));
+    pctx.lineJoin = 'round';
+    pctx.lineCap = 'round';
+
+    pctx.strokeStyle = `rgba(255, 0, 0, ${0.4 * alpha})`;   // glow
+    pctx.lineWidth = 5 * w;
+    pctx.shadowColor = '#ff0000';
+    pctx.shadowBlur = 12;
+    pctx.stroke();
+
+    pctx.strokeStyle = `rgba(255, 40, 40, ${alpha})`;        // body
+    pctx.lineWidth = 1.8 * w;
+    pctx.shadowBlur = 7;
+    pctx.stroke();
+
+    pctx.strokeStyle = `rgba(255, 170, 160, ${alpha})`;      // hot core
+    pctx.lineWidth = 0.8 * w;
+    pctx.shadowBlur = 0;
+    pctx.stroke();
+  }
+
+  let bolts = [];
+  let sparks = [];
+  let nextStrike = 0;
+
+  function addSparks(from, n) {
+    for (let i = 0; i < n; i++) {
+      sparks.push({
+        x: from.x,
+        y: from.y,
+        vx: (Math.random() - 0.5) * 1.8,
+        vy: (Math.random() - 0.5) * 1.8,
+        size: Math.random() * 1.1 + 0.4,
+        life: 1
+      });
+    }
+  }
+
+  function frame(time) {
+    requestAnimationFrame(frame);
+
+    if (!modalEl.classList.contains('open')) {
+      if (bolts.length || sparks.length) {
+        bolts = [];
+        sparks = [];
+        pctx.clearRect(0, 0, SIZE, SIZE);
+      }
+      return;
+    }
+
+    pctx.clearRect(0, 0, SIZE, SIZE);
+
+    if (time >= nextStrike) {
+      const arcs = 1 + Math.floor(Math.random() * 2);
+      for (let i = 0; i < arcs; i++) {
+        const a = makeArc();
+        bolts.push({ paths: [{ pts: a.pts, w: a.w }], life: a.life, decay: a.decay });
+        addSparks(a.spark, 2);
+      }
+      if (Math.random() < 0.6) {
+        const s = makeSpike();
+        bolts.push(s);
+        addSparks(s.spark, 3);
+      }
+      nextStrike = time + 120 + Math.random() * 280;
+    }
+
+    bolts.forEach(b => {
+      const alpha = Math.max(0, b.life) * (0.55 + Math.random() * 0.45);
+      pctx.save();
+      b.paths.forEach(p => strokePath(p.pts, p.w, alpha));
+      pctx.restore();
+      b.life -= b.decay;
+    });
+    bolts = bolts.filter(b => b.life > 0);
+
+    sparks.forEach(s => {
+      s.x += s.vx;
+      s.y += s.vy;
+      s.life -= 0.06;
+      if (s.life <= 0) return;
+      pctx.save();
+      pctx.beginPath();
+      pctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      pctx.fillStyle = `rgba(255, 70, 60, ${s.life})`;
+      pctx.shadowColor = '#ff0000';
+      pctx.shadowBlur = 6;
+      pctx.fill();
+      pctx.restore();
+    });
+    sparks = sparks.filter(s => s.life > 0);
+  }
+
+  requestAnimationFrame(frame);
+})();
 
 (function() {
     const style = document.createElement('style');
