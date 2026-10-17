@@ -1,6 +1,6 @@
 // ---------- Logout confirmation ----------
 // Change this to the page you want users to land on after logging out.
-const LOGOUT_REDIRECT_URL = '../User/index.html';
+const LOGOUT_REDIRECT_URL = '../UserInteraction/UserI.html';
 
 function openLogoutModal() {
   document.getElementById('logoutModal').style.display = 'flex';
