@@ -92,17 +92,12 @@ const CORRECT_PIN = "1234"; // Correct 4-digit code
             }
         });
 
-        // Functional Back Button
+        // Back button: goes to another page (change BACK_REDIRECT_URL to your page)
+        const BACK_REDIRECT_URL = '../UserInteraction/UserI.html';
         backBtn.addEventListener('click', () => {
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                userIdInput.value = '';
-                chancesRemaining = 2;
-                errorMessage.classList.add('hidden');
-                userIdInput.classList.remove('border-red-500');
-                userIdInput.classList.add('border-neutral-700');
-            }
+            document.body.style.transition = 'opacity 0.35s ease';
+            document.body.style.opacity = '0';          // quick fade out, then go
+            setTimeout(() => { window.location.href = BACK_REDIRECT_URL; }, 350);
         });
 
         /* ==========================================
