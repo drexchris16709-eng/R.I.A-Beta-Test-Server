@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>R.I.A Direct Developer</title>
-          <link rel="icon" type="image/png" href="Logo.jpg">
+        <link rel="icon" type="image/png" href="Logo.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -126,7 +126,7 @@
   border-radius: 10px;
 }
 .modal-body-scroll-container::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: var(--theme-track, #1a1a1a);
   border-radius: 10px;
 }
 
@@ -305,6 +305,97 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9) !important;
 }
 
+/* ===== Modal video background + auto-adapting dark theme ===== */
+.modal-bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.modal-bg-tint {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* --theme-tint is set by script.js from the video's average colour */
+  background-color: rgba(var(--theme-tint, 0, 0, 0), 0.78);
+  transition: background-color 0.8s ease;
+}
+
+.profile-modal .modal-banner-header,
+.profile-modal .modal-body-scroll-container {
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== Red glowing modal line ===== */
+.modal-content-box.profile-modal {
+  border: 2px solid #ff1a1a;
+  animation: modalRedGlow 2.4s ease-in-out infinite;
+}
+
+@keyframes modalRedGlow {
+  0%, 100% {
+    border-color: #b30000;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.35), 0 0 18px rgba(255, 0, 0, 0.15);
+  }
+  50% {
+    border-color: #ff2a2a;
+    box-shadow: 0 0 16px rgba(255, 0, 0, 0.75), 0 0 36px rgba(255, 0, 0, 0.35);
+  }
+}
+
+/* ===== Banner bottom shadow (contrast between banner and modal bg) ===== */
+.profile-modal .modal-banner-header {
+  box-shadow:
+    0 16px 28px -4px rgba(0, 0, 0, 0.95),
+    0 30px 50px -10px rgba(0, 0, 0, 0.8);
+}
+
+.modal-banner-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  /* same fade as the developer page banner: transparent -> black/30 -> black */
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    #000 100%
+  );
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ===== Red lightning around the profile circle line ===== */
+#profileLightning {
+  position: absolute;
+  /* centred on the profile circle: frame is 100px at left 25px, centre 130px from top */
+  top: 60px;
+  left: 5px;
+  width: 140px;
+  height: 140px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ===== Banner red lightning layer ===== */
+#bannerLightning {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
     </style>
 </head>
 <body class="bg-black selection:bg-neutral-800">
@@ -374,10 +465,15 @@
   <!-- ================= SEE MORE MODAL ================= -->
   <div id="see-more-modal" class="modal-overlay">
     <div class="modal-content-box profile-modal">
+      <!-- Background video: change src to use a different mp4 -->
+      <video id="modalBgVideo" class="modal-bg-video" src="D.mp4" muted loop playsinline preload="auto"></video>
+      <div class="modal-bg-tint"></div>
+
       <button id="close-see-more-btn" class="modal-x-btn">&times;</button>
 
       <div class="modal-banner-header">
         <img src="db.jpg" alt="Class Banner" class="modal-banner-img" />
+        <canvas id="bannerLightning"></canvas>
 
         <div class="modal-profile-frame">
           <img src="dp.jpg" alt="Profile Picture" class="modal-profile-img" />
@@ -393,6 +489,8 @@
           <div class="code-name-text">PRO &amp; ADMIN</div>
         </div>
       </div>
+
+      <canvas id="profileLightning"></canvas>
 
       <div class="modal-body-scroll-container">
         <h3>Developer Description</h3>
