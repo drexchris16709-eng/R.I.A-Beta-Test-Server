@@ -1,5 +1,5 @@
         const validCredentials = {
-            "d77": { passkey: "d775631", redirect: "../TestAccount/Test1.html" },
+            "A123": { passkey: "12345", redirect: "../TestAccount/Test1.html" },
             "user2": { passkey: "secret5678", redirect: "dashboard2.html" },
             "admin": { passkey: "adminpass99", redirect: "admin.html" },
             "cotcots": { passkey: "devpass2026", redirect: "developer.html" },
