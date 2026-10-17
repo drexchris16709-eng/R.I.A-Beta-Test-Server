@@ -217,3 +217,12 @@ body.leaving { opacity: 0; transform: scale(0.97) translateY(8px); }
 .chip.icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.25s ease; }
 @media (hover: hover) { .chip.icon:hover svg { transform: scale(1.18) rotate(-6deg); } }
 .chip.icon:active svg { transform: scale(0.9); }
+/* Scrollbar: normal long handle with fully round (circular) ends */
+.chat { scrollbar-width: auto; scrollbar-color: auto; }          /* lets the custom shape apply in Chrome/Edge/Safari */
+.chat::-webkit-scrollbar { width: 8px; }
+.chat::-webkit-scrollbar-track { background: #111; border-radius: 999px; margin: 6px 0; }
+.chat::-webkit-scrollbar-thumb { background: #fff; border-radius: 999px; min-height: 40px; }
+.chat::-webkit-scrollbar-thumb:hover { background: #cfcfcf; }
+@supports not selector(::-webkit-scrollbar) {                    /* Firefox: colour + thickness only */
+  .chat { scrollbar-width: thin; scrollbar-color: #fff #111; }
+}
