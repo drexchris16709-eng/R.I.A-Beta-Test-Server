@@ -10,7 +10,7 @@ function toggleSidebar() {
 
 const studentDatabase = [
   { lrn: "136741140482", password: "LMND4556", page: "../Lobendino/SD.html" },
-  { lrn: "136736120259", password: "775631", page: "../TestAccount/Test1.html" },
+  { lrn: "123456789", password: "12345", page: "../TestAccount/Test1.html" },
   { lrn: "136741140692", password: "SS1FFGH", page: "../Marquez/SD.html" },
   { lrn: "485552150053", password: "6677KLMG", page: "../Delarosa/SD.html" },
   { lrn: "100000000005", password: "passkeyVal5", page: "student5.html" },
