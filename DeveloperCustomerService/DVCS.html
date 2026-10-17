@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Developer Customer Service</title>
+  <link rel="icon" type="image/png" href="Logo.jpg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+
+    <!-- Banner: replace cs-banner.jpg with your own PNG/JPG -->
+    <header class="hero">
+      <img class="hero-banner" id="banner" alt="">
+    </header>
+
+    <section id="chat" class="chat" role="log" aria-live="polite" aria-label="Customer service chat"></section>
+
+    <input type="file" id="avatarPick" accept="image/png,image/jpeg" hidden>
+    <input type="file" id="bannerPick" accept="image/png,image/jpeg" hidden>
+    <footer class="footer">
+      <p class="hello">Hello! User: <span id="userId" class="uid"></span></p>
+      <form id="composer" class="composer" autocomplete="off">
+        <button type="button" id="backBtn" class="circle back" aria-label="Back">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <input id="msg" type="text" placeholder="Type your message..." aria-label="Type your message" enterkeyhint="send">
+        <button type="submit" id="sendBtn" class="circle send" aria-label="Send message">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L3 10.5l6.5 2.5L12 20.5 21 3z"/><path d="M9.5 13L21 3"/></svg>
+        </button>
+      </form>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
