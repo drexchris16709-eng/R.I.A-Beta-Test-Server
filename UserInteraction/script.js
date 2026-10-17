@@ -268,7 +268,7 @@ if (closeCreateAccountBtn) {
    ========================================================= */
 
 const STATIC_USERS = [
-    { name: 'Christian Andrie B. Lumpod', position: 'Main Dev', role: 'VIP User', date: 'Aug 22, 2026', status: 'Fully created' },
+    { name: 'Christian Andrie B. Lumpod', position: 'Main Dev', role: 'VIP User', date: 'Aug 22, 2026', status: 'Not created yet' },
     { name: 'Franze Deo J. Dela Rosa',    position: 'UI/UX Designer', role: 'VIP User', date: '???', status: 'Not created yet' },
     { name: 'Stephen Chloe Costales',    position: 'Game Dev', role: 'Beta User', date: '???', status: 'Not created yet' },
     { name: 'Rayn Simpas',    position: 'Front End Dev', role: 'Beta User', date: '???', status: 'Not created yet' },
