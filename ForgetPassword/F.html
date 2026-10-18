@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>R.I.A Forgot Password</title>
+  <link rel="icon" type="image/png" href="Logo.jpg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+
+    <!-- Banner + profile: replace banner.jpg / profile.png with your own files -->
+    <header class="hero">
+      <div class="hero-media"><img class="hero-banner" src="B.jpg" alt=""></div>
+      <img class="hero-avatar" src="Logo.jpg" alt="Profile picture">
+    </header>
+
+    <h1 class="rise" style="--i:0">Forgot Password</h1>
+
+    <form id="resetForm" novalidate>
+      <label for="userId" class="rise" style="--i:1">User ID:</label>
+      <div class="field rise" style="--i:1">
+        <input id="userId" type="text" placeholder="Type your User ID here..." autocomplete="username">
+      </div>
+
+      <label for="oldPass" class="rise" style="--i:2">Old Password:</label>
+      <div class="field has-eye rise" style="--i:2">
+        <input id="oldPass" type="password" placeholder="Type your Old Password here..." autocomplete="current-password">
+        <button type="button" class="eye" data-target="oldPass" aria-label="Show password" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <g class="eye-body"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle class="eye-pupil" cx="12" cy="12" r="3"/></g>
+            <path class="eye-slash" d="M4 4l16 16"/>
+          </svg>
+        </button>
+      </div>
+
+      <label for="newPass" class="rise" style="--i:3">New Password:</label>
+      <div class="field has-eye rise" style="--i:3">
+        <input id="newPass" type="password" placeholder="Type your New Password here..." autocomplete="new-password">
+        <button type="button" class="eye" data-target="newPass" aria-label="Show password" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <g class="eye-body"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle class="eye-pupil" cx="12" cy="12" r="3"/></g>
+            <path class="eye-slash" d="M4 4l16 16"/>
+          </svg>
+        </button>
+      </div>
+
+      <p id="formError" class="error" role="alert" hidden>Fill in all three fields to continue.</p>
+
+      <div class="actions rise" style="--i:4">
+        <button type="button" id="backBtn" class="back">
+          <span class="back-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></span>
+          Back
+        </button>
+        <button type="submit" id="enterBtn" class="enter">Enter</button>
+      </div>
+    </form>
+  </main>
+
+  <!-- 1) Wait message (shown 7 seconds) -->
+  <div id="waitModal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="waitText">
+    <div class="dialog">
+      <svg class="dialog-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path class="clock-hour" d="M12 12V8.5"/><path class="clock-hand" d="M12 12V6.5"/></svg>
+      <p id="waitText">Wait up to 4 hours to save your new password</p>
+      <div class="bar"><span></span></div>
+    </div>
+  </div>
+
+  <!-- 2) Loading, then the page refreshes -->
+  <div id="loadingModal" class="overlay" role="alertdialog" aria-modal="true" aria-label="Loading">
+    <div class="dialog">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

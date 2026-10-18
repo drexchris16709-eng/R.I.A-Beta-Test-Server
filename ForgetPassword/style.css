@@ -1,0 +1,269 @@
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --error: #ff4d4d;
+  --muted: #8a8a8a;   /* placeholder ("Type your ...") */
+  --text: #e6e6e6;    /* typed text */
+  --pad: clamp(16px, 4.1vw, 22px);
+  --avatar-size: clamp(88px, 23vw, 120px);   /* profile / logo circle */
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body { margin: 0; background: var(--bg); color: var(--fg); }
+body {
+  font-family: 'Work Sans', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.page {
+  max-width: 480px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: max(22px, env(safe-area-inset-bottom));
+}
+
+/* ---------- Banner + profile ---------- */
+.hero { position: relative; height: clamp(190px, 31dvh, 300px); }
+.hero-media { position: absolute; inset: 0; overflow: hidden; background: #111; }
+.hero-banner { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; display: block; background: #111; }
+.hero-avatar {
+  position: absolute;
+  right: 5.7%;
+  bottom: 0;
+  transform: translateY(50%);
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  aspect-ratio: 1;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+}
+
+/* ---------- Title + form ---------- */
+h1 {
+  margin: 14px 0 8px;
+  padding-inline: var(--pad);
+  font-size: clamp(22px, 7vw, 36px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+
+form { flex: 1; display: flex; flex-direction: column; padding-inline: var(--pad); }
+
+label { margin: 14px 0 8px; font-size: 15px; font-weight: 700; }
+
+.field { position: relative; }
+.field input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  background: var(--bg);
+  color: var(--text);
+  border: 2px solid var(--fg);
+  border-radius: 0;
+  font: 400 16px 'Work Sans', system-ui, sans-serif;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.field.has-eye input { padding-right: 54px; }
+.field input::placeholder { color: var(--muted); opacity: 1; }
+.field input::placeholder { transition: opacity 0.25s ease; }
+.field input:focus { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3); }
+.field input:focus::placeholder { opacity: 0.35; }
+.field input.invalid { border-color: var(--error); animation: shake 0.4s ease; }
+.field input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 100px #000 inset;
+  -webkit-text-fill-color: var(--text);
+}
+
+/* Eye indicator */
+.eye {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--fg);
+  cursor: pointer;
+}
+.eye svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.eye { transition: transform 0.15s ease; }
+.eye:active { transform: translateY(-50%) scale(0.88); }
+
+.eye-body, .eye-pupil { transform-box: fill-box; transform-origin: center; }
+.eye-pupil { transition: transform 0.3s ease; }
+.eye-slash { stroke-dasharray: 23; stroke-dashoffset: 0; }   /* hidden state: line is drawn */
+
+/* hide: the line draws across the eye with a soft glow */
+.eye[aria-pressed="false"] .eye-slash { animation: slashDraw 0.5s cubic-bezier(0.65, 0, 0.35, 1) both; }
+.eye[aria-pressed="false"] .eye-pupil { transform: scale(0.55); }
+
+/* show: the line wipes away and the pupil opens */
+.eye[aria-pressed="true"] .eye-slash { stroke-dashoffset: 23; animation: slashErase 0.3s ease both; }
+@keyframes slashDraw {
+  from { stroke-dashoffset: 23; filter: drop-shadow(0 0 0 #fff); }
+  60%  { filter: drop-shadow(0 0 5px #fff); }
+  to   { stroke-dashoffset: 0;  filter: drop-shadow(0 0 0 #fff); }
+}
+@keyframes slashErase { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 23; } }
+
+/* quick blink on every click */
+.eye.blink .eye-body { animation: blink 0.35s ease; }
+@keyframes blink { 50% { transform: scaleY(0.1); } }
+
+.error { margin: 14px 0 0; color: var(--error); font-size: 13px; }
+.error:not([hidden]) { animation: fadeDown 0.3s ease both; }
+
+/* ---------- Back / Enter ---------- */
+.actions { margin-top: auto; padding-top: 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 0 0 clamp(6px, 4vw, 20px);
+  background: none;
+  border: 0;
+  color: var(--fg);
+  font: 400 19px 'Work Sans', system-ui, sans-serif;
+  cursor: pointer;
+}
+.back-circle { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+.back-circle svg { width: 20px; height: 20px; fill: none; stroke: #000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.enter {
+  flex: 0 0 44%;
+  min-width: 150px;
+  height: 56px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: #000;
+  font: 700 clamp(22px, 6.4vw, 28px) 'Work Sans', system-ui, sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+.back-circle { transition: transform 0.2s ease; }
+.back-circle svg { transition: transform 0.2s ease; }
+@media (hover: hover) {
+  .enter:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(255, 255, 255, 0.2); }
+  .back:hover .back-circle { transform: scale(1.08); }
+  .back:hover .back-circle svg { transform: translateX(-2px); }
+}
+.enter:active { transform: scale(0.97); box-shadow: none; }
+.back:active .back-circle { transform: scale(0.92); }
+.enter:disabled { opacity: 0.6; cursor: default; }
+
+.back:focus-visible, .enter:focus-visible, .eye:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* ---------- Modals ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+.overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
+
+.dialog {
+  width: min(88%, 360px);
+  padding: 30px 24px 26px;
+  background: #000;
+  border: 2px solid #fff;
+  border-radius: 20px;
+  text-align: center;
+  transform: translateY(24px);
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+.overlay.open .dialog { transform: translateY(0); }
+.dialog p { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.4; }
+
+.dialog-icon { width: 44px; height: 44px; margin-bottom: 14px; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.clock-hand, .clock-hour { transform-box: view-box; transform-origin: 12px 12px; }
+.clock-hand { animation: tick 3s linear infinite; }
+.clock-hour { animation: tick 36s linear infinite; }
+@keyframes tick { to { transform: rotate(360deg); } }
+#loadingModal p { animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.45; } }
+
+.bar { height: 4px; margin-top: 22px; background: #222; border-radius: 4px; overflow: hidden; }
+.bar span { display: block; width: 0; height: 100%; background: #fff; }
+.overlay.open .bar span { animation: fill var(--wait, 7000ms) linear forwards; }
+@keyframes fill { to { width: 100%; } }
+
+.spinner { width: 42px; height: 42px; margin: 0 auto 16px; border: 4px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+/* ---------- Small phones ---------- */
+@media (max-width: 360px) {
+  .back { gap: 10px; font-size: 17px; }
+  .enter { min-width: 136px; }
+}
+
+/* ---------- Tablet / desktop: centred card ---------- */
+@media (min-width: 640px) {
+  :root { --pad: 28px; }
+  body { display: flex; min-height: 100vh; min-height: 100dvh; padding: 24px; }
+  .page {
+    width: 100%;
+    max-width: 520px;
+    min-height: 0;
+    margin: auto;
+    padding-bottom: 32px;
+    overflow: hidden;
+    border: 1px solid #262626;
+    border-radius: 24px;
+    box-shadow: 0 0 80px rgba(255, 255, 255, 0.05);
+  }
+  .hero { height: 240px; }
+  h1 { margin-top: 18px; }
+  form { flex: none; }
+  .actions { margin-top: 36px; padding-top: 0; }
+  .back { padding-left: 0; }
+}
+
+/* ---------- Entrance + idle animations ---------- */
+.rise { animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(0.4s + var(--i, 0) * 0.1s); }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+/* banner image: settles in, then drifts slowly */
+.hero-banner { animation: bannerIn 1.2s ease-out both, drift 16s ease-in-out 1.2s infinite alternate; }
+@keyframes bannerIn { from { opacity: 0; transform: scale(1.12); } to { opacity: 1; transform: scale(1); } }
+@keyframes drift { from { transform: scale(1); } to { transform: scale(1.07); } }
+
+/* logo / profile image: pops in, then a soft ring pulses */
+.hero-avatar { animation: avatarPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both, ring 3s ease-out 1.5s infinite; }
+@keyframes avatarPop { from { opacity: 0; transform: translateY(50%) scale(0.5); } to { opacity: 1; transform: translateY(50%) scale(1); } }
+@keyframes ring { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); } 100% { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0); } }
+
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+@keyframes fadeDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .hero-banner, .hero-avatar, .field input.invalid, .error:not([hidden]) { animation: none; }
+  .overlay, .dialog, .enter, .field input, .back-circle, .back-circle svg { transition: none; }
+}
