@@ -220,6 +220,185 @@
   const saveRecents = () => { try { localStorage.setItem(RECENT_KEY, JSON.stringify(recents)); } catch (e) {} };
   const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+  /* =====================================================
+     STUDENTS (12 - HOPPER)
+     - typing a name or a number in the search shows matching students
+     - tapping a student opens the student modal (No. / Student / name / role)
+     - Enter with a match opens it too
+     ===================================================== */
+  const STUDENTS_RAW = [
+    'ALCANTARA, SHARID VINZ VALENCIANO', 'ALELUYA, JAY LORD CABUELLO', 'ALMONTE, MARC GABRIELLE DOCIL',
+    'AMOROSO, JOSEFF CRISTOFFER MUHI', 'ARGAWANON, JAN RHAIN MENDOZA', 'AYAP, AMBER REIGN ALCARAZ',
+    'AYOSO, EDRHIAN VILLAS', 'BANDALAN, KYLE JASSEM TORMO', 'BORJA, FRANC JAROD FELIX',
+    'CANGAYAO, DOS EUGENE MARCUS GASQUE', 'DELA ROSA, FRANZE DEO JUANILLO', 'FELISILDA, CARL JOHN ZAPANTA',
+    'FRANCISCO, JOHN LESTER ARCIPE', 'JARABE, LEBRON ALLEN MEDURA', 'JUANCE, JOHN MARK ACENAS',
+    'LOBENDINO, ARMIL JOHN PIELAGO', 'LUMPOD, CHRISTIAN ANDRIE BASAÑEZ', 'MARQUEZ, RYLE KRISTOF SERRANO',
+    'MILGAR, ERIC JOHN ARCIPE', 'OLANOLAN, CHRISTOPHER JOHANN DADOR', 'PINEDA, CHRISTIAN PAUL ACOSTA',
+    'PRETAL, JOHN VINCENT TICAR', 'SALINO, CLIFFORD JAY DOMO', 'SANTILLAN, JOHN HILDO PANILAGA',
+    'SARA, RHINO NAMOCO', 'SERVO, KERVIN KYLE DELA CRUZ', 'ALCANSE, ROCHEL ANN MAE SUGANOG',
+    'AMISTOSO, AIRISH SUELO', 'BADONG, LORRAINE ANDREA AQUINO', 'BARRIOS, DANICA GADAINGAN',
+    'BASIS, AUDREY BEBITA', 'CAUSING, JEAN LOUISSE CINCOLLAGAS'
+  ];
+  // roles shown under the name in the modal (number in the list -> role). Add more here, e.g. { 17: 'PIO', 5: 'Mayor' }
+  const ROLES = { 17: 'Developer' };
+
+  const NAME_PARTS = ['dela', 'de', 'del', 'delos', 'san', 'santa'];
+  const cap = (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+  const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  // "LUMPOD, CHRISTIAN ANDRIE BASAÑEZ" -> "Lumpod, Christian Andrie B."
+  function formatName(raw) {
+    const [last, rest] = raw.split(',').map((x) => x.trim());
+    const w = (rest || '').split(/\s+/).filter(Boolean);
+    let mid = w.length > 1 ? [w.pop()] : [];
+    if (mid.length && w.length > 1 && NAME_PARTS.includes(w[w.length - 1].toLowerCase())) mid.unshift(w.pop());
+    const initial = mid.length ? ' ' + cap(mid[0]).charAt(0) + '.' : '';
+    return last.split(/\s+/).map(cap).join(' ') + ', ' + w.map(cap).join(' ') + initial;
+  }
+
+  const STUDENTS = STUDENTS_RAW.map((raw, i) => {
+    const name = formatName(raw);
+    return { no: i + 1, name, role: ROLES[i + 1] || '', key: norm(raw + ' ' + name) };
+  });
+
+  const studentList = $('studentList');
+  const recentSub = $('recentSub');
+
+  function findStudents(raw) {
+    const q = norm(raw).trim().replace(/\s+/g, ' ');
+    if (!q) return [];
+    const num = q.replace(/^(no\.?|#)\s*/, '');
+    if (/^\d+$/.test(num)) return STUDENTS.filter((s) => String(s.no).startsWith(num));
+    const tokens = q.replace(/[.,]/g, ' ').split(' ').filter(Boolean);
+    return STUDENTS.filter((s) => tokens.every((t) => s.key.includes(t)));
+  }
+
+  function renderStudents(q) {
+    const hits = q ? findStudents(q) : [];
+    studentList.hidden = hits.length === 0;
+    studentList.innerHTML = hits.map((s, i) => `
+      <li class="recent-item student-item" data-no="${s.no}" style="--e:${Math.min(i, 7)}">
+        <span class="no-badge">${s.no}</span>
+        <div class="recent-line">
+          <button type="button" class="recent-text">${highlight(s.name, q)}</button>
+          <span class="stu-chip">Student</span>
+        </div>
+      </li>`).join('');
+    return hits.length;
+  }
+
+  /* ---------- student modal ---------- */
+  const stuOverlay = $('stuOverlay');
+  const stuNo = $('stuNo');
+  const stuName = $('stuName');
+  const stuRole = $('stuRole');
+  const stuClose = $('stuClose');
+  let stuOpen = false, stuCloseTimer = 0, stuCountRaf = 0, stuLastFocus = null;
+
+  function countUpNo(to) {
+    cancelAnimationFrame(stuCountRaf);
+    const write = (n) => { stuNo.textContent = 'No. ' + n; };
+    if (reduceMotion) { write(to); return; }
+    write(0);
+    const t0 = performance.now(), delay = 260, dur = 600;
+    const tick = (now) => {
+      const p = Math.min(1, Math.max(0, (now - t0 - delay) / dur));
+      write(Math.round(to * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) stuCountRaf = requestAnimationFrame(tick);
+    };
+    stuCountRaf = requestAnimationFrame(tick);
+  }
+
+  // red lightning bolts that flash around the outside of the letters
+  function addSparks(host, n) {
+    const r = (lo, hi) => lo + Math.random() * (hi - lo);
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement('span');
+      s.className = 'dev-spark';
+      const edge = Math.random() < 0.5;                       // half near the top/bottom edge, half near the sides
+      const x = edge ? r(-4, 100) : (Math.random() < 0.5 ? r(-12, -2) : r(100, 110));
+      const y = edge ? (Math.random() < 0.5 ? r(-70, -20) : r(100, 150)) : r(-10, 70);
+      const w = r(10, 16);
+      s.style.left = x + '%';
+      s.style.top = y + '%';
+      s.style.width = w + 'px';
+      s.style.height = (w * 2.2) + 'px';
+      s.style.transform = 'rotate(' + Math.round(r(-35, 35)) + 'deg)';
+      const bolt = document.createElement('i');
+      bolt.style.animationDuration = r(1.4, 2.8).toFixed(2) + 's';
+      bolt.style.animationDelay = r(0, 2.2).toFixed(2) + 's';
+      s.appendChild(bolt);
+      s.setAttribute('aria-hidden', 'true');
+      host.appendChild(s);
+    }
+  }
+
+  function openStudent(no) {
+    const s = STUDENTS[no - 1];
+    if (!s) return;
+    clearTimeout(stuCloseTimer);
+    stuLastFocus = document.activeElement;
+    stuName.textContent = s.name;
+    stuRole.textContent = s.role;
+    stuRole.querySelectorAll('.dev-spark').forEach((n) => n.remove());
+    stuRole.classList.toggle('dev-fx', s.role === 'Developer');
+    if (s.role === 'Developer') addSparks(stuRole, 12);
+    stuNo.setAttribute('aria-label', 'No. ' + s.no);
+    stuOverlay.hidden = false;
+    stuOverlay.classList.remove('show', 'closing');
+    void stuOverlay.offsetWidth;            // restart the animations every time
+    stuOverlay.classList.add('show');
+    document.body.classList.add('stu-open');
+    stuOpen = true;
+    countUpNo(s.no);
+    stuClose.focus({ preventScroll: true });
+  }
+
+  function closeStudent() {
+    if (!stuOpen) return;
+    stuOpen = false;
+    cancelAnimationFrame(stuCountRaf);
+    stuOverlay.classList.remove('show');
+    stuOverlay.classList.add('closing');
+    stuCloseTimer = setTimeout(() => {
+      stuOverlay.hidden = true;
+      stuOverlay.classList.remove('closing');
+      document.body.classList.remove('stu-open');
+      if (stuLastFocus && stuLastFocus.focus && stuLastFocus !== document.body) stuLastFocus.focus({ preventScroll: true });
+    }, reduceMotion ? 0 : 280);
+  }
+
+  stuClose.addEventListener('click', closeStudent);
+  stuOverlay.addEventListener('click', (e) => { if (e.target === stuOverlay) closeStudent(); });
+  // registered before the search Escape handler so Esc closes the modal first
+  document.addEventListener('keydown', (e) => {
+    if (!stuOpen) return;
+    if (e.key === 'Escape') { e.stopImmediatePropagation(); closeStudent(); }
+    else if (e.key === 'Tab') { e.preventDefault(); stuClose.focus(); }
+  });
+
+  studentList.addEventListener('click', (e) => {
+    const li = e.target.closest('.student-item');
+    if (!li) return;
+    const s = STUDENTS[+li.dataset.no - 1];
+    addRecent(s.name);
+    input.blur();
+    openStudent(s.no);
+  });
+
+  // a search that matches students stays on the results (and opens the modal when there is only one match)
+  function runSearch(v) {
+    v = v.trim();
+    if (!v) return;
+    const hits = findStudents(v);
+    if (!hits.length) { commit(v); return; }
+    addRecent(v);
+    input.value = v;
+    input.blur();
+    renderRecent();
+    if (hits.length === 1) openStudent(hits[0].no);
+  }
+
   function addRecent(term) {
     term = term.trim().replace(/\s+/g, ' ');
     if (!term) return;
@@ -263,7 +442,9 @@
 
   function renderRecent() {
     const { q, rows } = currentRows();
-    recentTitle.textContent = 'Recent';
+    const sCount = renderStudents(q);
+    recentTitle.textContent = sCount ? 'Students' : 'Recent';
+    recentSub.hidden = !(sCount && rows.length);
     // suggestions only show while the search box is empty (typing hides them, clearing/X brings them back)
     const sw = $('suggestWrap'); if (sw) sw.hidden = !!q;
     recentList.innerHTML = rows.map((r, i) => `
@@ -275,8 +456,8 @@
         </div>
       </li>`).join('');
     initIcons(recentList);
-    recentEmpty.hidden = rows.length > 0;
-    clearBtn.hidden = recents.length === 0;
+    recentEmpty.hidden = rows.length > 0 || sCount > 0;
+    clearBtn.hidden = recents.length === 0 || sCount > 0;
     recentEmpty.textContent = q ? 'No matches found' : 'No recent searches yet';
     applyLimit(false);
   }
@@ -332,7 +513,7 @@
   input.addEventListener('focus', openSearch);
   form.addEventListener('click', () => { if (document.activeElement !== input) input.focus(); });
   input.addEventListener('input', () => { if (searching) renderRecent(); });
-  form.addEventListener('submit', (e) => { e.preventDefault(); const v = input.value.trim(); if (v) commit(v); });
+  form.addEventListener('submit', (e) => { e.preventDefault(); const v = input.value.trim(); if (v) runSearch(v); });
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (quick.classList.contains('open')) setMenu(false); else if (searching) cancel();
@@ -348,13 +529,13 @@
         recents = recents.filter((r) => r !== term);
         saveRecents();
         li.remove();
-        recentEmpty.hidden = recentList.children.length > 0;
+        recentEmpty.hidden = recentList.children.length > 0 || studentList.children.length > 0;
         clearBtn.hidden = recents.length === 0;
         applyLimit(true);
       }, 280);
       return;
     }
-    commit(term);
+    runSearch(term);
   });
 
   moreBtn.addEventListener('click', () => { expanded = !expanded; applyLimit(true); });
