@@ -108,10 +108,47 @@ document.addEventListener('DOMContentLoaded', () => {
   const seeMoreModal = document.getElementById('see-more-modal');
   const closeSeeMoreBtn = document.getElementById('close-see-more-btn');
 
+  // mp3: starts when See More is clicked, loops, and stops when the modal is closed (X / tap outside)
+  const music = document.getElementById('modalMusic');
+  const MUSIC_SRC = 'D.mp3';
+
+  let musicWanted = false;   // true while the modal is open: the music keeps looping, even if it ends or gets paused by the browser
+
+  const startMusic = () => {
+    if (!music) return;
+    musicWanted = true;
+    if (!music.getAttribute('src')) music.src = MUSIC_SRC;   // restored after the offline handler clears media
+    music.loop = true;
+    music.currentTime = 0;
+    const p = music.play();
+    if (p && p.catch) p.catch((err) => console.log('Music blocked or missing:', err));
+  };
+
+  const stopMusic = () => {
+    if (!music) return;
+    musicWanted = false;
+    music.pause();
+    music.currentTime = 0;
+  };
+
+  const resumeMusic = () => {
+    if (!music || !musicWanted || !music.getAttribute('src')) return;
+    const p = music.play();
+    if (p && p.catch) p.catch(() => {});
+  };
+
+  if (music) {
+    // if the track ever reaches its end or stops by itself, start it again right away
+    music.addEventListener('ended', () => { music.currentTime = 0; resumeMusic(); });
+    music.addEventListener('pause', () => { if (musicWanted && !document.hidden) setTimeout(() => { if (music.paused) resumeMusic(); }, 150); });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && music.paused) resumeMusic(); });
+  }
+
   if (seeMoreBtn && seeMoreModal) {
     seeMoreBtn.addEventListener('click', () => {
       seeMoreModal.classList.add('open');
       document.body.style.overflow = 'hidden';
+      startMusic();
     });
   }
 
@@ -119,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeWindow = () => {
       seeMoreModal.classList.remove('open');
       document.body.style.overflow = '';
+      stopMusic();
     };
 
     closeSeeMoreBtn.addEventListener('click', closeWindow);
@@ -300,8 +338,6 @@ if (canvas) {
       grad.addColorStop(1, 'rgba(200, 0, 0, 0)');
 
       ctx.fillStyle = grad;
-      ctx.shadowColor = '#ff1a1a';
-      ctx.shadowBlur = 10;
       ctx.fill();
       ctx.restore();
     }
@@ -336,22 +372,27 @@ if (canvas) {
 
     ctx.strokeStyle = '#ff2a2a';
     ctx.shadowColor = '#ff0000';
-    ctx.shadowBlur = Math.random() * 12 + 8;
+    ctx.shadowBlur = Math.random() * 5 + 4;
     ctx.lineWidth = Math.random() * 1.5 + 1;
     ctx.stroke();
     ctx.restore();
   }
 
-  // ----- Animation loop -----
-  let lastLightningTime = 0;
+  // ----- Animation loop: only while the modal is open, ~30 fps (same speed as 60 fps) -----
+  const energyModal = document.getElementById('see-more-modal');
+  let lastLightningTime = 0, lastFrame = 0, rafId = 0, energyRunning = false;
 
   function animate(time) {
+    rafId = requestAnimationFrame(animate);
+    const dt = time - lastFrame;
+    if (dt < 30) return;
+    lastFrame = time;
+    const steps = Math.min(3, Math.max(1, Math.round(dt / 16.7)));
+
     ctx.clearRect(0, 0, width, height);
 
-    flameParticles.forEach(p => {
-      p.update();
-      p.draw();
-    });
+    for (let s = 0; s < steps; s++) flameParticles.forEach(p => p.update());
+    flameParticles.forEach(p => p.draw());
 
     if (time - lastLightningTime > 600) {
       lastLightningTime = time;
@@ -363,11 +404,22 @@ if (canvas) {
         drawLightningArc(startAngle, startAngle + arcLength);
       }
     }
-
-    requestAnimationFrame(animate);
   }
 
-  requestAnimationFrame(animate);
+  function setEnergy(on) {
+    if (on === energyRunning) return;
+    energyRunning = on;
+    cancelAnimationFrame(rafId);
+    if (on) { lastFrame = 0; rafId = requestAnimationFrame(animate); }
+    else ctx.clearRect(0, 0, width, height);
+  }
+
+  if (energyModal) {
+    new MutationObserver(() => setEnergy(energyModal.classList.contains('open')))
+      .observe(energyModal, { attributes: true, attributeFilter: ['class'] });
+    document.addEventListener('visibilitychange', () => setEnergy(!document.hidden && energyModal.classList.contains('open')));
+    setEnergy(energyModal.classList.contains('open'));
+  }
 }
 
 /* ==========================================
@@ -452,7 +504,7 @@ if (canvas) {
     }
   }
 
-  setInterval(updateTheme, 500);
+  setInterval(() => { if (!document.hidden) updateTheme(); }, 1500);
   bgVideo.addEventListener('loadeddata', updateTheme);
 
   // Play the background video only while the modal is open
@@ -480,7 +532,7 @@ if (canvas) {
   function resizeBanner() {
     const rect = bannerCanvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     bw = rect.width;
     bh = rect.height;
     bannerCanvas.width = Math.round(bw * dpr);
@@ -542,12 +594,12 @@ if (canvas) {
     bctx.strokeStyle = `rgba(255, 0, 0, ${0.35 * alpha})`;   // outer glow
     bctx.lineWidth = 7 * w;
     bctx.shadowColor = '#ff0000';
-    bctx.shadowBlur = 18;
+    bctx.shadowBlur = 8;
     bctx.stroke();
 
     bctx.strokeStyle = `rgba(255, 40, 40, ${alpha})`;        // body
     bctx.lineWidth = 2.4 * w;
-    bctx.shadowBlur = 10;
+    bctx.shadowBlur = 4;
     bctx.stroke();
 
     bctx.strokeStyle = `rgba(255, 170, 160, ${alpha})`;      // hot core
@@ -628,7 +680,7 @@ if (canvas) {
       bctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
       bctx.fillStyle = `rgba(255, 60, 50, ${s.life})`;
       bctx.shadowColor = '#ff0000';
-      bctx.shadowBlur = 8;
+      bctx.shadowBlur = 4;
       bctx.fill();
       bctx.restore();
     });
@@ -652,7 +704,7 @@ if (canvas) {
   const R = 50; // outer edge of the profile circle line
 
   const pctx = pCanvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
   pCanvas.width = SIZE * dpr;
   pCanvas.height = SIZE * dpr;
   pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -705,12 +757,12 @@ if (canvas) {
     pctx.strokeStyle = `rgba(255, 0, 0, ${0.4 * alpha})`;   // glow
     pctx.lineWidth = 5 * w;
     pctx.shadowColor = '#ff0000';
-    pctx.shadowBlur = 12;
+    pctx.shadowBlur = 6;
     pctx.stroke();
 
     pctx.strokeStyle = `rgba(255, 40, 40, ${alpha})`;        // body
     pctx.lineWidth = 1.8 * w;
-    pctx.shadowBlur = 7;
+    pctx.shadowBlur = 3;
     pctx.stroke();
 
     pctx.strokeStyle = `rgba(255, 170, 160, ${alpha})`;      // hot core
@@ -784,7 +836,7 @@ if (canvas) {
       pctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
       pctx.fillStyle = `rgba(255, 70, 60, ${s.life})`;
       pctx.shadowColor = '#ff0000';
-      pctx.shadowBlur = 6;
+      pctx.shadowBlur = 3;
       pctx.fill();
       pctx.restore();
     });
