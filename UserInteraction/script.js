@@ -284,7 +284,7 @@ const STATIC_USERS = [
     { name: 'Ryle Kristof Marquez',    position: 'Admin', role: 'VIP User', date: '???', status: 'Not created yet' },
     { name: 'Christian Paul Pineda',    position: 'Admin', role: 'VIP User', date: '???', status: 'Not created yet' },
     { name: 'Airish Amistoso',    position: 'Student', role: 'New User', date: '???', status: 'Not created yet' },
-    { name: 'Eric John Milgar',    position: 'Admin', role: 'Early user', date: '???', status: 'Not created yet' },
+    { name: 'Eric John Milgar',    position: 'Admin', role: 'Early User', date: '???', status: 'Not created yet' },
 
 ];
 
