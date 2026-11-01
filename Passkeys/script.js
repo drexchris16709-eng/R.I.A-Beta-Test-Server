@@ -1,6 +1,6 @@
         const validCredentials = {
             "b233": { passkey: "fg8890", redirect: "../TestAccount/Test1.html" },
-            "user2": { passkey: "secret5678", redirect: "dashboard2.html" },
+            "user2": { passkey: "m2234", redirect: "../TestAccount - Teacher/Test1.html" },
             "admin": { passkey: "adminpass99", redirect: "admin.html" },
             "cotcots": { passkey: "devpass2026", redirect: "developer.html" },
             "alpha": { passkey: "keyalpha11", redirect: "alpha.html" },
